@@ -1,4 +1,4 @@
-"""Pet Behavior Engine for Sprite.
+"""Pet Behavior Engine for Aura.
 
 State machine, personality, emotions, and autonomous behavior
 for the generative AR pet.
@@ -49,7 +49,7 @@ class Emotion(Enum):
 
 @dataclass
 class Personality:
-    """Five-dimensional personality for each Sprite.
+    "Five-dimensional personality for each Aura."
 
     All values 0.0-1.0, randomized at creation.
     """

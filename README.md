@@ -1,14 +1,14 @@
 > 🌐 [中文](README.zh-CN.md) | **English**
 
-# Sprite ✨📱
+# Aura ✨📱
 
 **Generative AR Pet** — A pet that lives in your camera. Drawn by AI. Every one is unique.
 
-## What Is Sprite?
+## What Is Aura?
 
-Sprite is an AI pet that lives in your phone's camera viewfinder. It's not a 3D model — it's drawn in real time by a generative model, composited onto your camera feed. Every Sprite is born unique from a single image or description. No two are alike.
+Aura is an AI pet that lives in your phone's camera viewfinder. It's not a 3D model — it's drawn in real time by a generative model, composited onto your camera feed. Every Aura is born unique from a single image or description. No two are alike.
 
-- 🎨 **Generative Identity** — Upload a drawing or describe it. Your Sprite is one of a kind.
+- 🎨 **Generative Identity** — Upload a drawing or describe it. Your Aura is one of a kind.
 - 📱 **Lives in Your Camera** — Sits on your desk, hides behind your coffee, follows you around.
 - 👆 **Touch** — Tap to poke, swipe to pet, drag to move.
 - 🗣️ **Voice** — Talk to it. It tilts its head. It learns your voice.
@@ -17,8 +17,8 @@ Sprite is an AI pet that lives in your phone's camera viewfinder. It's not a 3D 
 ## Quick Start
 
 ```bash
-git clone https://github.com/SpencerRaw/sprite.git
-cd sprite
+git clone https://github.com/SpencerRaw/aura.git
+cd aura
 pip install -r requirements.txt
 streamlit run app/streamlit_app.py
 ```
@@ -26,13 +26,13 @@ streamlit run app/streamlit_app.py
 ## Project Structure
 
 ```
-sprite/
+aura/
 ├── PLAN.md                   # Product plan & architecture
 ├── README.md / README.zh-CN.md
 ├── requirements.txt
 ├── app/
 │   └── streamlit_app.py      # Interactive AR pet demo
-├── src/sprite/
+├── src/aura/
 │   ├── pet_engine.py         # Behavior, personality, emotions
 │   ├── generator.py          # Generative model pipeline
 │   ├── ar_pipeline.py        # AR rendering simulation

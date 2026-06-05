@@ -1,4 +1,4 @@
-"""Interaction Models for Sprite.
+"""Interaction Models for Aura.
 
 Multi-modal interaction:
 - Touch: poke, pet, drag, double-tap, long-press, shake
@@ -42,7 +42,7 @@ class TouchEvent:
 
 
 class TouchRecognizer:
-    """Gesture recognizer for Sprite interactions.
+    """Gesture recognizer for Aura interactions.
 
     Designed for playful, forgiving touch — not precision gestures.
     """
@@ -113,13 +113,13 @@ class VoiceEvent:
 
 
 class VoiceRecognizer:
-    """Voice intent classifier for Sprite.
+    """Voice intent classifier for Aura.
 
     In production: on-device ASR (Whisper.cpp) → LLM intent classification.
     For MVP: keyword matching with pet name awareness.
     """
 
-    def __init__(self, pet_name: str = "Sprite"):
+    def __init__(self, pet_name: str = "Aura"):
         self.pet_name = pet_name.lower()
 
     def recognize(self, text: str) -> VoiceEvent:

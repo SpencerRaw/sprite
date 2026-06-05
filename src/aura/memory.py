@@ -1,4 +1,4 @@
-"""Memory Layer for Sprite — Relationship That Grows.
+"""Memory Layer for Aura — Relationship That Grows.
 
 Tracks the evolving relationship between user and pet:
 - Daily interaction log
@@ -39,10 +39,10 @@ class DailyLog:
 
 @dataclass
 class PetMemory:
-    """Full memory archive for a Sprite."""
+    """Full memory archive for a Aura."""
 
     pet_id: str
-    pet_name: str = "Sprite"
+    pet_name: str = "Aura"
     created_at: float = field(default_factory=time.time)
     total_interactions: int = 0
     daily_logs: list[DailyLog] = field(default_factory=list)

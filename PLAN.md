@@ -1,4 +1,4 @@
-# Sprite — Product Plan
+# Aura — Product Plan
 
 > **Tagline**: A pet that lives in your world. Drawn by AI. Alive in your camera.
 > **Status**: Concept / MVP (pre-seed)
@@ -10,7 +10,7 @@
 
 AR pets exist. Tamagotchi existed. AI companions exist. But none of them combine all three: **generative, real-time, and physically present**.
 
-**Sprite** is an AI pet that lives in your phone's camera. Every Sprite is unique — generated from a single image or description, never seen before, never to be replicated. It sits on your desk. It hides behind your coffee mug. It recognizes your voice, reacts to your touch, and learns your routines.
+**Aura** is an AI pet that lives in your phone's camera. Every Aura is unique — generated from a single image or description, never seen before, never to be replicated. It sits on your desk. It hides behind your coffee mug. It recognizes your voice, reacts to your touch, and learns your routines.
 
 This is not a 3D model with ARKit. This is a generative model rendering in real time, frame by frame, composited onto your camera feed. The pet is drawn into existence — and drawn differently each time, but with consistent identity.
 
@@ -19,9 +19,9 @@ This is not a 3D model with ARKit. This is a generative model rendering in real 
 ## 2. Core Experience
 
 ```
-[Open Sprite app] → [Camera viewfinder]
+[Open Aura app] → [Camera viewfinder]
                           ↓
-[Generate your Sprite: upload a drawing, a photo, or describe it]
+[Generate your Aura: upload a drawing, a photo, or describe it]
                           ↓
 [A unique creature appears in your camera — sitting on your desk]
                           ↓
@@ -40,7 +40,7 @@ This is not a 3D model with ARKit. This is a generative model rendering in real 
 
 ## 3. Generative Identity
 
-Every Sprite is born from a single seed image or text prompt.
+Every Aura is born from a single seed image or text prompt.
 
 ### Appearance Generation (once, at creation)
 ```
@@ -52,7 +52,7 @@ Base appearance: 4-8 reference frames (front, side, back, expressions)
         ↓
 LoRA fine-tune: lock the identity into a consistent character
         ↓
-Sprite identity is born
+Aura identity is born
 ```
 
 ### Real-Time Rendering (every frame) — Powered by StreamDiffusionV2
@@ -237,10 +237,10 @@ Pet photos (5-15) ──→ LoRA fine-tuning (~15 min on A100)
 
 ## 7. Memory Layer
 
-Like 念念, Sprite remembers. But here it's about the relationship:
+Like 念念, Aura remembers. But here it's about the relationship:
 
 ```
-Day 1: Sprite is shy. Stays at the edges. Watches.
+Day 1: Aura is shy. Stays at the edges. Watches.
 Day 3: Approaches when you say its name.
 Day 7: Sits on your desk while you work. Knows your morning routine.
 Day 30: Appears at the door when you come home. Has a favorite spot.
@@ -249,7 +249,7 @@ Day 100: Knows your mood from your voice. Brings you "gifts" (generated objects)
 
 ### Memory Data Model
 ```
-Sprite.memory = {
+Aura.memory = {
   "name": "given by user",
   "birthday": "creation date",
   "favorite_spot": "top-right of desk",
@@ -278,7 +278,7 @@ Sprite.memory = {
 
 ### b) Engine Prototype
 ```
-src/sprite/
+src/aura/
 ├── pet_engine.py      # Behavior state machine, personality, emotions
 ├── generator.py       # Generative model pipeline (image-to-pet + rendering)
 ├── ar_pipeline.py     # AR rendering simulation (camera→gen→composite)
@@ -292,7 +292,7 @@ app/
 └── streamlit_app.py   # Simulated AR pet experience:
                         - Pet creation (describe → generate appearance)
                         - Live camera simulation (upload photo → pet composited)
-                        - Touch interaction (click/pet/drag the sprite)
+                        - Touch interaction (click/pet/drag the aura)
                         - Voice input (type to simulate speech)
                         - Memory timeline
 ```

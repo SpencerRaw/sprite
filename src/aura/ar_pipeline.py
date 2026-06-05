@@ -1,4 +1,4 @@
-"""AR Rendering Pipeline for Sprite.
+"""AR Rendering Pipeline for Aura.
 
 Simulates the real-time AR pipeline:
   Camera → Scene Understanding → Pet State Update → Generative Render → Composite → Display

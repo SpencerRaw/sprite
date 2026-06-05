@@ -1,4 +1,4 @@
-"""Sprite — Generative AR Pet Prototype.
+"""Aura — Generative AR Pet Prototype.
 
 Streamlit app simulating the AR pet experience.
 """
@@ -12,15 +12,15 @@ import streamlit.components.v1 as components
 import time
 import random
 
-from sprite.pet_engine import Pet, PetState, Emotion, Personality, Needs
-from sprite.generator import IdentityGenerator, FrameRenderer, SpriteAppearance
-from sprite.ar_pipeline import ARPipeline, CameraFrame, SceneAnalyzer
-from sprite.interaction import TouchRecognizer, VoiceRecognizer, Gesture, VoiceIntent
-from sprite.memory import PetMemory
+from aura.pet_engine import Pet, PetState, Emotion, Personality, Needs
+from aura.generator import IdentityGenerator, FrameRenderer, AuraAppearance
+from aura.ar_pipeline import ARPipeline, CameraFrame, SceneAnalyzer
+from aura.interaction import TouchRecognizer, VoiceRecognizer, Gesture, VoiceIntent
+from aura.memory import PetMemory
 
 
 st.set_page_config(
-    page_title="Sprite — Your AR Pet",
+    page_title="Aura — Your AR Pet",
     page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -29,8 +29,8 @@ st.set_page_config(
 # --- CSS ---
 st.markdown("""
 <style>
-    .sprite-title { font-size: 2.5rem; font-weight: 600; letter-spacing: -0.02em; color: #2d2d2d; }
-    .sprite-subtitle { font-size: 1.1rem; color: #888; }
+    .aura-title { font-size: 2.5rem; font-weight: 600; letter-spacing: -0.02em; color: #2d2d2d; }
+    .aura-subtitle { font-size: 1.1rem; color: #888; }
     .pet-canvas-container { background: #1a1a2e; border-radius: 16px; padding: 10px;
                             text-align: center; border: 2px solid #333; }
     .status-bar { background: #f5f0e8; padding: 0.8rem 1.2rem; border-radius: 12px;
@@ -64,10 +64,10 @@ if "messages" not in st.session_state:
 
 # --- Sidebar ---
 with st.sidebar:
-    st.markdown("## ✨ Sprite")
+    st.markdown("## ✨ Aura")
     st.caption("Your Generative AR Pet")
 
-    page = st.radio("Navigate", ["🎨 Create Sprite", "📱 AR View", "📖 Memory"],
+    page = st.radio("Navigate", ["🎨 Create Aura", "📱 AR View", "📖 Memory"],
                     label_visibility="collapsed")
 
     st.divider()
@@ -83,33 +83,33 @@ with st.sidebar:
         st.progress(needs["curiosity"], text="🔍 Curiosity")
 
     st.divider()
-    st.caption("[GitHub](https://github.com/SpencerRaw/sprite)")
+    st.caption("[GitHub](https://github.com/SpencerRaw/aura)")
 
 
 # ============================================================
 # PAGE 1: CREATE SPRITE
 # ============================================================
-if page == "🎨 Create Sprite":
-    st.markdown('<p class="sprite-title">🎨 Create Your Sprite</p>', unsafe_allow_html=True)
-    st.markdown('<p class="sprite-subtitle">Describe it. Draw it. Every Sprite is one of a kind.</p>', unsafe_allow_html=True)
+if page == "🎨 Create Aura":
+    st.markdown('<p class="aura-title">🎨 Create Your Aura</p>', unsafe_allow_html=True)
+    st.markdown('<p class="aura-subtitle">Describe it. Draw it. Every Aura is one of a kind.</p>', unsafe_allow_html=True)
 
     col1, col2 = st.columns([1, 1])
 
     with col1:
-        st.markdown("### Describe Your Sprite")
+        st.markdown("### Describe Your Aura")
         desc = st.text_area(
             "What does it look like?",
             placeholder="e.g., A small fluffy creature with big round eyes, pastel purple fur, tiny wings, and a sparkly tail...",
             height=120,
             label_visibility="collapsed",
         )
-        name = st.text_input("Give it a name", value="Sprite", label_visibility="collapsed")
+        name = st.text_input("Give it a name", value="Aura", label_visibility="collapsed")
 
-        if st.button("✨ Birth a Sprite", type="primary", use_container_width=True):
+        if st.button("✨ Birth a Aura", type="primary", use_container_width=True):
             if desc.strip():
                 gen = IdentityGenerator()
                 appearance = gen.generate_from_description(desc)
-                pet = Pet(id=f"sprite_{random.randint(1000,9999)}", name=name or "Sprite")
+                pet = Pet(id=f"aura_{random.randint(1000,9999)}", name=name or "Aura")
                 pet.appearance_prompt = appearance.base_prompt
                 renderer = FrameRenderer(appearance)
                 memory = PetMemory(pet_id=pet.id, pet_name=pet.name)
@@ -125,7 +125,7 @@ if page == "🎨 Create Sprite":
                 st.success(f"{name} is born! Switch to AR View to meet them.")
                 st.rerun()
             else:
-                st.warning("Describe your Sprite first!")
+                st.warning("Describe your Aura first!")
 
     with col2:
         st.markdown("### Preview")
@@ -152,7 +152,7 @@ if page == "🎨 Create Sprite":
                 </div>
                 """, unsafe_allow_html=True)
         else:
-            st.info("Describe your Sprite on the left to see a preview.")
+            st.info("Describe your Aura on the left to see a preview.")
 
 
 # ============================================================
@@ -160,7 +160,7 @@ if page == "🎨 Create Sprite":
 # ============================================================
 elif page == "📱 AR View":
     if not st.session_state.pet:
-        st.warning("Create your Sprite first!")
+        st.warning("Create your Aura first!")
         st.stop()
 
     pet = st.session_state.pet
@@ -169,7 +169,7 @@ elif page == "📱 AR View":
     ar = st.session_state.ar_pipeline
     voice = st.session_state.voice
 
-    st.markdown(f'<p class="sprite-title">📱 {pet.name}</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="aura-title">📱 {pet.name}</p>', unsafe_allow_html=True)
 
     # Update pet state
     pet.update(0.5)  # 500ms step
@@ -233,7 +233,7 @@ elif page == "📱 AR View":
             st.rerun()
 
     # Voice input
-    st.markdown("### 🗣️ Talk to Your Sprite")
+    st.markdown("### 🗣️ Talk to Your Aura")
     voice_text = st.text_input("Say something...", placeholder='"Hello!" or "Good boy!" or "Are you hungry?"',
                                label_visibility="collapsed")
     if voice_text:
@@ -259,13 +259,13 @@ elif page == "📱 AR View":
 # ============================================================
 elif page == "📖 Memory":
     if not st.session_state.memory:
-        st.warning("Create your Sprite first!")
+        st.warning("Create your Aura first!")
         st.stop()
 
     memory = st.session_state.memory
     pet = st.session_state.pet
 
-    st.markdown(f'<p class="sprite-title">📖 {pet.name}\'s Memory</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="aura-title">📖 {pet.name}\'s Memory</p>', unsafe_allow_html=True)
 
     # Relationship stage
     stage_emoji = {"stranger": "🌱", "acquaintance": "🌿", "friend": "🪴",
@@ -301,7 +301,7 @@ elif page == "📖 Memory":
             </div>
             """, unsafe_allow_html=True)
     else:
-        st.info("No milestones yet. Start interacting with your Sprite!")
+        st.info("No milestones yet. Start interacting with your Aura!")
 
     # Behavior by stage
     st.markdown("### 🧠 Behavior Profile")
@@ -320,7 +320,7 @@ elif page == "📖 Memory":
 # ============================================================
 
 def render_pet_canvas(frame: dict, pet: Pet, memory: PetMemory) -> str:
-    """Render the Sprite on a canvas simulating the AR view."""
+    """Render the Aura on a canvas simulating the AR view."""
     colors = frame.get("colors", ["#FF6B6B", "#FFE66D", "#FF8E72"])
     eye_open = frame.get("eye_scale_y", 0.8)
     mouth = frame.get("mouth_curve", 0)
@@ -336,12 +336,12 @@ def render_pet_canvas(frame: dict, pet: Pet, memory: PetMemory) -> str:
 
     return f"""
     <div class="pet-canvas-container">
-        <canvas id="spriteCanvas" width="600" height="460"
+        <canvas id="auraCanvas" width="600" height="460"
                 style="cursor:pointer; border-radius:12px;"></canvas>
         <div style="color:#ccc; margin-top:8px; font-style:italic;">{greeting}</div>
     </div>
     <script>
-    const canvas = document.getElementById('spriteCanvas');
+    const canvas = document.getElementById('auraCanvas');
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
     const cx = W/2, cy = H/2 + {bounce};

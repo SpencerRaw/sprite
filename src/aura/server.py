@@ -1,4 +1,4 @@
-"""WebSocket Streaming Server for Sprite.
+"""WebSocket Streaming Server for Aura.
 
 Streams rendered AR pet frames from GPU server to mobile clients.
 Architecture:
@@ -17,7 +17,7 @@ Protocol (JSON + binary frames):
     {"type": "error", "message": "GPU OOM"}
 
 Usage:
-    python -m sprite.server --port 8765 --lora ./loras/buddy.safetensors
+    python -m aura.server --port 8765 --lora ./loras/buddy.safetensors
 """
 
 from __future__ import annotations
@@ -52,8 +52,8 @@ class ClientState:
     active: bool = True
 
 
-class SpriteServer:
-    """WebSocket server that streams rendered Sprite frames.
+class AuraServer:
+    """WebSocket server that streams rendered Aura frames.
 
     Designed to run on a cloud GPU instance (e.g., AWS g5.xlarge, Lambda Labs A100).
     Multiple clients can connect simultaneously — each gets their own render pipeline.
@@ -84,7 +84,7 @@ class SpriteServer:
         try:
             import websockets
         except ImportError:
-            print("[Sprite] Install websockets: pip install websockets")
+            print("[Aura] Install websockets: pip install websockets")
             raise
 
         self._running = True
@@ -94,10 +94,10 @@ class SpriteServer:
             self.port,
             max_size=10 * 1024 * 1024,  # 10MB max message
         )
-        print(f"[Sprite] Server started: ws://{self.host}:{self.port}")
-        print(f"[Sprite] LoRA: {self.lora_path or 'none'}")
-        print(f"[Sprite] Model: {self.model_id}")
-        print(f"[Sprite] Max clients: {self.max_clients}")
+        print(f"[Aura] Server started: ws://{self.host}:{self.port}")
+        print(f"[Aura] LoRA: {self.lora_path or 'none'}")
+        print(f"[Aura] Model: {self.model_id}")
+        print(f"[Aura] Max clients: {self.max_clients}")
 
         await self._server.wait_closed()
 
@@ -113,7 +113,7 @@ class SpriteServer:
             if client.renderer:
                 client.renderer.unload()
 
-        print("[Sprite] Server stopped.")
+        print("[Aura] Server stopped.")
 
     # --- Client Handling ---
 
@@ -135,7 +135,7 @@ class SpriteServer:
         self.clients[client_id] = client
 
         remote = websocket.remote_address
-        print(f"[Sprite] Client connected: {client_id} from {remote}")
+        print(f"[Aura] Client connected: {client_id} from {remote}")
 
         try:
             # Initialize renderer for this client
@@ -146,18 +146,18 @@ class SpriteServer:
                 try:
                     await self._handle_message(websocket, client, message)
                 except Exception as e:
-                    print(f"[Sprite] Error handling message from {client_id}: {e}")
+                    print(f"[Aura] Error handling message from {client_id}: {e}")
                     traceback.print_exc()
                     await self._send_error(websocket, str(e))
 
         except Exception as e:
-            print(f"[Sprite] Client {client_id} error: {e}")
+            print(f"[Aura] Client {client_id} error: {e}")
         finally:
             # Cleanup
             if client.renderer:
                 client.renderer.unload()
             self.clients.pop(client_id, None)
-            print(f"[Sprite] Client disconnected: {client_id}")
+            print(f"[Aura] Client disconnected: {client_id}")
 
     async def _init_client_renderer(self, client: ClientState):
         """Initialize the StreamRenderer for a client."""
@@ -178,7 +178,7 @@ class SpriteServer:
         client.renderer.load(lora_path=self.lora_path)
         client.pose_estimator = PoseEstimator(512, 512)
 
-        print(f"[Sprite] Renderer initialized for {client.client_id}")
+        print(f"[Aura] Renderer initialized for {client.client_id}")
 
     async def _handle_message(self, websocket, client: ClientState, raw_message: str):
         """Process an incoming WebSocket message."""
@@ -344,7 +344,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Sprite WebSocket streaming server."
+        description="Aura WebSocket streaming server."
     )
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=8765)
@@ -354,7 +354,7 @@ def main():
 
     args = parser.parse_args()
 
-    server = SpriteServer(
+    server = AuraServer(
         host=args.host,
         port=args.port,
         lora_path=args.lora,
@@ -365,7 +365,7 @@ def main():
     try:
         asyncio.run(server.start())
     except KeyboardInterrupt:
-        print("\n[Sprite] Shutting down...")
+        print("\n[Aura] Shutting down...")
         asyncio.run(server.stop())
 
 

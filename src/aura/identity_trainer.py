@@ -1,10 +1,10 @@
-"""LoRA Identity Trainer for Sprite.
+"""LoRA Identity Trainer for Aura.
 
 Fine-tunes a Stable Diffusion model on pet photos to create
 a persistent identity LoRA that the StreamRenderer uses.
 
 Usage:
-    python -m sprite.identity_trainer \
+    python -m aura.identity_trainer \
         --photos ./my_pet_photos/ \
         --name "Buddy" \
         --output ./loras/buddy.safetensors
@@ -109,11 +109,11 @@ class IdentityTrainer:
             )
 
         if len(photos) > 30:
-            print(f"[Sprite] Warning: {len(photos)} photos may slow training. "
+            print(f"[Aura] Warning: {len(photos)} photos may slow training. "
                   f"Consider selecting the best 15-20.")
 
         self._photos = photos
-        print(f"[Sprite] Loaded {len(photos)} photos for identity training.")
+        print(f"[Aura] Loaded {len(photos)} photos for identity training.")
         return photos
 
     def prepare_dataset(self) -> str:
@@ -162,9 +162,9 @@ class IdentityTrainer:
         with open(metadata_path, "w") as f:
             f.write("\n".join(metadata_lines))
 
-        print(f"[Sprite] Dataset prepared: {len(self._photos)} images at "
+        print(f"[Aura] Dataset prepared: {len(self._photos)} images at "
               f"{self.config.resolution}×{self.config.resolution}")
-        print(f"[Sprite] Metadata: {metadata_path}")
+        print(f"[Aura] Metadata: {metadata_path}")
 
         return str(dataset_dir)
 
@@ -203,10 +203,10 @@ class IdentityTrainer:
 
         dataset_dir = self.prepare_dataset()
 
-        print(f"[Sprite] Starting LoRA training for '{self.config.pet_name}'...")
-        print(f"[Sprite] Model: {self.config.base_model}")
-        print(f"[Sprite] Epochs: {self.config.num_epochs}, LR: {self.config.learning_rate}")
-        print(f"[Sprite] LoRA rank: {self.config.lora_rank}")
+        print(f"[Aura] Starting LoRA training for '{self.config.pet_name}'...")
+        print(f"[Aura] Model: {self.config.base_model}")
+        print(f"[Aura] Epochs: {self.config.num_epochs}, LR: {self.config.learning_rate}")
+        print(f"[Aura] LoRA rank: {self.config.lora_rank}")
 
         # Load base model
         pipe = StableDiffusionPipeline.from_pretrained(
@@ -284,7 +284,7 @@ class IdentityTrainer:
                 total_loss += loss.item()
 
             avg_loss = total_loss / max(len(dataloader), 1)
-            print(f"[Sprite] Epoch {epoch+1}/{self.config.num_epochs} — loss: {avg_loss:.4f}")
+            print(f"[Aura] Epoch {epoch+1}/{self.config.num_epochs} — loss: {avg_loss:.4f}")
 
         # Save LoRA
         output_dir = Path(self.config.output_dir)
@@ -292,8 +292,8 @@ class IdentityTrainer:
         output_path = output_dir / self.config.output_name
 
         unet.save_pretrained(output_dir)
-        print(f"[Sprite] ✅ LoRA saved: {output_path}")
-        print(f"[Sprite] Training complete! Load with:")
+        print(f"[Aura] ✅ LoRA saved: {output_path}")
+        print(f"[Aura] Training complete! Load with:")
         print(f"    renderer.load(lora_path='{output_path}')")
 
         return str(output_path)
@@ -305,7 +305,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Train a LoRA identity for your Sprite pet."
+        description="Train a LoRA identity for your Aura pet."
     )
     parser.add_argument("--photos", required=True, help="Directory of pet photos")
     parser.add_argument("--name", required=True, help="Your pet's name")
@@ -333,7 +333,7 @@ def main():
 
     print(f"\n{'='*60}")
     print(f"✨ Identity LoRA ready: {lora_path}")
-    print(f"   Your Sprite can now render {args.name} in real time.")
+    print(f"   Your Aura can now render {args.name} in real time.")
     print(f"{'='*60}")
 
 

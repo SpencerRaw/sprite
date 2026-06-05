@@ -1,4 +1,4 @@
-"""StreamDiffusionV2 Renderer for Sprite.
+"""StreamDiffusionV2 Renderer for Aura.
 
 Real-time generative rendering pipeline for AR pet.
 Wraps StreamDiffusionV2 with LoRA identity + ControlNet pose control.
@@ -180,9 +180,9 @@ class StreamRenderer:
             num_inference_steps=self.config.num_inference_steps,
         )
 
-        print(f"[Sprite] StreamDiffusionV2 loaded. Model: {model_id}")
-        print(f"[Sprite] LoRA: {'loaded' if self._lora_loaded else 'none'}")
-        print(f"[Sprite] ControlNet: {'loaded' if self._controlnet_loaded else 'none'}")
+        print(f"[Aura] StreamDiffusionV2 loaded. Model: {model_id}")
+        print(f"[Aura] LoRA: {'loaded' if self._lora_loaded else 'none'}")
+        print(f"[Aura] ControlNet: {'loaded' if self._controlnet_loaded else 'none'}")
 
         return self
 
@@ -191,13 +191,13 @@ class StreamRenderer:
         from diffusers.utils import load_image
 
         if not Path(lora_path).exists():
-            print(f"[Sprite] WARNING: LoRA file not found: {lora_path}")
+            print(f"[Aura] WARNING: LoRA file not found: {lora_path}")
             return
 
         self._pipe.load_lora_weights(lora_path)
         self._pipe.fuse_lora(lora_scale=self.config.lora_scale)
         self._lora_loaded = True
-        print(f"[Sprite] Identity LoRA loaded: {lora_path}")
+        print(f"[Aura] Identity LoRA loaded: {lora_path}")
 
     # --- Real-Time Rendering ---
 
@@ -209,7 +209,7 @@ class StreamRenderer:
         strength: float = 0.6,                       # img2img strength
         seed: int = -1,
     ) -> Image.Image:
-        """Render a single frame of the Sprite.
+        """Render a single frame of the Aura.
 
         Args:
             camera_frame: Current camera frame (for inpainting/compositing context).
@@ -291,14 +291,14 @@ class StreamRenderer:
             daemon=True,
         )
         self._render_thread.start()
-        print(f"[Sprite] Streaming started at target {self.config.target_fps} FPS")
+        print(f"[Aura] Streaming started at target {self.config.target_fps} FPS")
 
     def stop_streaming(self):
         """Stop the rendering thread."""
         self._running = False
         if self._render_thread:
             self._render_thread.join(timeout=5.0)
-        print(f"[Sprite] Streaming stopped. Total frames: {self.frame_count}")
+        print(f"[Aura] Streaming stopped. Total frames: {self.frame_count}")
 
     def _streaming_loop(
         self,
@@ -343,7 +343,7 @@ class StreamRenderer:
                 last_frame_time = time.time()
 
             except Exception as e:
-                print(f"[Sprite] Render error: {e}")
+                print(f"[Aura] Render error: {e}")
                 time.sleep(0.1)
 
     # --- Helpers ---
@@ -399,7 +399,7 @@ class StreamRenderer:
         del self._stream
         import torch
         torch.cuda.empty_cache()
-        print("[Sprite] Renderer unloaded, GPU memory freed.")
+        print("[Aura] Renderer unloaded, GPU memory freed.")
 
 
 # --- Pose Estimator (for ControlNet input) ---
