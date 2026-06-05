@@ -55,7 +55,8 @@ LoRA fine-tune: lock the identity into a consistent character
 Sprite identity is born
 ```
 
-### Real-Time Rendering (every frame)
+### Real-Time Rendering (every frame) — Powered by StreamDiffusionV2
+
 ```
 Camera frame (720p, 30fps)
         ↓
@@ -63,19 +64,41 @@ Scene understanding: detect surfaces, lighting, occluders
         ↓
 Pet state update: position, pose, expression, reaction
         ↓
-Image-to-image generation: render pet at current state, consistent with identity
+Pose Estimator: generate ControlNet skeleton from pet state
         ↓
-Alpha composite: blend pet into camera frame with correct lighting + occlusion
+StreamDiffusionV2: SD Turbo img2img + Identity LoRA + ControlNet
+        ↓  (1 denoising step, ~16ms on A100, ~5ms on H100)
+Alpha mask extraction + composite with camera frame
         ↓
-Display
+Display at 30-60 FPS
 ```
 
-### Frame Rate Strategy
-| Mode | FPS | Method |
-|------|-----|--------|
-| Idle (pet sitting) | 8-12 fps | Lightweight diffusion step distillation |
-| Interaction (poked) | 15-20 fps | LCM (Latent Consistency Model) for fast sampling |
-| Generation burst | 30 fps | Frame interpolation between generated keyframes |
+### Frame Rate Benchmarks (StreamDiffusionV2, Nov 2025)
+
+| GPU | Model | Steps | FPS | Resolution |
+|-----|-------|-------|-----|------------|
+| A100 | SD Turbo 1.3B | 1 | **61.6** | 512×512 |
+| A100 | SDXL Turbo 14B | 1 | **31.6** | 512×512 |
+| H100 | SD Turbo 1.3B | 1 | **90+** | 512×512 |
+| RTX 4090 | SD Turbo 1.3B | 1 | **45** | 512×512 |
+
+With LoRA: no significant overhead (<2% FPS impact).
+With ControlNet: ~15% FPS reduction.
+
+### Identity Consistency Strategy
+
+```
+Pet photos (5-15) ──→ LoRA fine-tuning (~15 min on A100)
+                            ↓
+                  Identity LoRA (.safetensors)
+                            ↓
+[Every frame] ──→ SD Turbo img2img + LoRA + ControlNet ──→ Consistent pet
+```
+
+- **LoRA rank 16**: Captures face, fur pattern, body shape, color palette
+- **IP-Adapter** (optional): Additional identity anchoring for edge cases
+- **ControlNet OpenPose**: Controls pet body position and posture per frame
+- **Prompt anchoring**: Identity description prepended to every frame prompt
 
 ---
 

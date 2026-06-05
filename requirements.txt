@@ -1,3 +1,15 @@
 streamlit>=1.28
 numpy<2
 Pillow>=10.0
+
+# GPU rendering (optional — only needed for real-time SD pipeline)
+# torch>=2.1
+# diffusers>=0.25
+# streamdiffusion
+# controlnet_aux
+# xformers
+# peft
+# accelerate
+
+# WebSocket server (optional)
+# websockets>=12.0

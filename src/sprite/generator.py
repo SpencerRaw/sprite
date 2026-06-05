@@ -137,20 +137,55 @@ class IdentityGenerator:
 
 
 class FrameRenderer:
-    """Simulates the real-time generative rendering pipeline.
+    """Generative rendering pipeline for Sprite frames.
 
-    In production, this calls SD Turbo / LCM-LoRA for each frame.
-    For MVP, we generate pseudo-random frames from the appearance + state.
+    Two-tier:
+    1. If GPU + StreamDiffusionV2 available: real-time SD Turbo rendering
+    2. Otherwise: procedural Canvas rendering (MVP fallback)
+
+    To use real rendering:
+        from sprite.stream_renderer import StreamRenderer, RendererConfig
+        renderer = StreamRenderer(RendererConfig(lora_path="pet.safetensors"))
+        renderer.load()
+        frame = renderer.render(camera_frame, pose_image, prompt)
     """
 
     def __init__(self, appearance: SpriteAppearance):
         self.appearance = appearance
         self.frame_count = 0
         self._rng = random.Random(appearance.seed)
+        self._stream_renderer = None  # Lazy-loaded when GPU available
+
+    def try_load_stream_renderer(self, lora_path: str = None) -> bool:
+        """Attempt to load StreamDiffusionV2 for real rendering.
+        
+        Returns True if successfully loaded, False if GPU not available.
+        """
+        try:
+            from .stream_renderer import StreamRenderer, RendererConfig
+            config = RendererConfig(
+                model_id="stabilityai/sd-turbo",
+                lora_path=lora_path,
+                width=512, height=512,
+                target_fps=30,
+                use_tiny_vae=True,
+            )
+            self._stream_renderer = StreamRenderer(config)
+            self._stream_renderer.load(lora_path=lora_path)
+            return True
+        except (ImportError, Exception) as e:
+            print(f"[Sprite] Stream renderer not available: {e}")
+            print(f"[Sprite] Falling back to procedural rendering.")
+            return False
+
+    def has_real_renderer(self) -> bool:
+        return self._stream_renderer is not None
 
     def render_frame(self, expression_params: dict,
                      position: tuple[float, float] = (0.5, 0.5),
-                     size: float = 1.0) -> dict:
+                     size: float = 1.0,
+                     camera_frame=None,
+                     pose_image=None) -> dict:
         """Render a single frame of the Sprite.
 
         Returns a dict with rendering instructions for the canvas.
@@ -158,7 +193,29 @@ class FrameRenderer:
         """
         self.frame_count += 1
 
-        # Procedural animation based on expression params
+        # If real renderer is available, use it
+        if self._stream_renderer:
+            prompt = f"{self.appearance.body_shape} creature, looking at camera, cute"
+            try:
+                from PIL import Image as PILImage
+                rendered = self._stream_renderer.render(
+                    camera_frame=camera_frame,
+                    pose_image=pose_image,
+                    prompt=prompt,
+                    strength=0.5,
+                )
+                # Return rendering params pointing to the generated image
+                return {
+                    "x": position[0], "y": position[1],
+                    "size": size,
+                    "rendered_image": rendered,
+                    "renderer": "streamdiffusion_v2",
+                    "frame": self.frame_count,
+                }
+            except Exception as e:
+                print(f"[Sprite] Stream render failed, falling back: {e}")
+
+        # Procedural animation based on expression params (fallback)
         bounce = expression_params.get("body_bounce", 0)
         wag = expression_params.get("tail_wag", 0)
         glow = expression_params.get("glow", 0)
